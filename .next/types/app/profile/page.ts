@@ -1,4 +1,4 @@
-// File: C:\Users\ADMIQN\Downloads\animeapp-main\anime-web\src\app\profile\page.tsx
+// File: /Users/kushalsdev/Documents/NextJS_Proj/AnimeStreaming/src/app/profile/page.tsx
 import * as entry from '../../../../src/app/profile/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

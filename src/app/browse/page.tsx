@@ -155,7 +155,7 @@ function BrowsePage() {
           <ShimmerGrid count={12} />
         ) : (
           <>
-            <div className="flex flex-wrap">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
               {filteredData.map((item, i) => (
                 <AnimeCard
                   key={item.id}

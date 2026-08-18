@@ -39,20 +39,14 @@ function AnimeCard({
     });
   };
 
-  const sizeClasses = {
-    large: 'w-full sm:w-1/2 md:w-1/3 lg:w-1/4',
-    medium: 'w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5',
-    small: 'w-1/3 sm:w-1/4 md:w-1/5 lg:w-1/6',
-  };
-
   return (
-    <Link href={`/anime/${id}`} className="block p-2">
+    <Link href={`/anime/${id}`} className="block">
       <div
         ref={cardRef}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onMouseMove={handleMouseMove}
-        className={`group relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-500 ${sizeClasses[type]}`}
+        className="group relative cursor-pointer overflow-hidden rounded-2xl transition-all duration-500"
         style={{
           animation: `slide-up 0.6s ease-out ${index * 0.05}s both`,
         }}

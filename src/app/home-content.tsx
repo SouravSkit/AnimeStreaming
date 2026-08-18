@@ -104,7 +104,7 @@ function HomePageContent() {
               accentColor="#ef4444"
               viewAllHref="/browse"
             />
-            <div className="flex flex-wrap">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
               {topAiring.slice(0, 10).map((item, i) => (
                 <AnimeCard
                   key={item.id}
@@ -129,7 +129,7 @@ function HomePageContent() {
               accentColor="#22d3ee"
               viewAllHref="/browse"
             />
-            <div className="flex flex-wrap">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
               {popular.slice(0, 10).map((item, i) => (
                 <AnimeCard
                   key={`popular-${item.id}`}
@@ -172,7 +172,7 @@ function HomePageContent() {
                   View All →
                 </Link>
               </div>
-              <div className="flex flex-wrap">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
                 {genreData[key].results.slice(0, 10).map((item, i) => (
                   <AnimeCard
                     key={`special-${key}-${item.id}`}

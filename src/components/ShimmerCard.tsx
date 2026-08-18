@@ -2,15 +2,9 @@
 
 import React from 'react';
 
-function ShimmerCard({ type = 'medium' }: { type?: 'large' | 'medium' | 'small' }) {
-  const sizeClasses = {
-    large: 'w-full sm:w-1/2 md:w-1/3 lg:w-1/4',
-    medium: 'w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/5',
-    small: 'w-1/3 sm:w-1/4 md:w-1/5 lg:w-1/6',
-  };
-
+function ShimmerCard() {
   return (
-    <div className={`${sizeClasses[type]} p-2`}>
+    <div>
       <div className="shimmer aspect-[2/3] rounded-2xl" />
       <div className="mx-auto mt-3 h-3 w-3/4 rounded-full shimmer" />
       <div className="mx-auto mt-2 h-2 w-1/2 rounded-full shimmer" />
@@ -18,11 +12,11 @@ function ShimmerCard({ type = 'medium' }: { type?: 'large' | 'medium' | 'small' 
   );
 }
 
-export function ShimmerGrid({ count = 8, type = 'medium' }: { count?: number; type?: 'large' | 'medium' | 'small' }) {
+export function ShimmerGrid({ count = 8 }: { count?: number }) {
   return (
-    <div className="flex flex-wrap">
+    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
       {Array.from({ length: count }).map((_, i) => (
-        <ShimmerCard key={i} type={type} />
+        <ShimmerCard key={i} />
       ))}
     </div>
   );

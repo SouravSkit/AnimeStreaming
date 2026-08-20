@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import Typography from './Typography';
-import { Play, Star } from 'lucide-react';
+import { Play, Star, Film, Tv } from 'lucide-react';
 
 type Props = {
   id: string;
@@ -12,6 +12,8 @@ type Props = {
   releaseDate?: string;
   rating?: string;
   episodes?: number;
+  mediaType?: 'movie' | 'tv';
+  href?: string; // Override default link
   type?: 'large' | 'medium' | 'small';
   index?: number;
 };
@@ -23,6 +25,8 @@ function AnimeCard({
   releaseDate,
   rating,
   episodes,
+  mediaType,
+  href,
   type = 'medium',
   index = 0,
 }: Props) {
@@ -39,8 +43,11 @@ function AnimeCard({
     });
   };
 
+  // Use provided href or default to anime route
+  const linkHref = href || `/anime/${id}`;
+
   return (
-    <Link href={`/anime/${id}`} className="block">
+    <Link href={linkHref} className="block">
       <div
         ref={cardRef}
         onMouseEnter={() => setIsHovered(true)}
@@ -63,15 +70,21 @@ function AnimeCard({
           }}
         >
           {/* Image */}
-          <img
-            src={image}
-            alt={title}
-            className="h-full w-full object-cover transition-transform duration-700"
-            style={{
-              transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-            }}
-            loading="lazy"
-          />
+          {image ? (
+            <img
+              src={image}
+              alt={title}
+              className="h-full w-full object-cover transition-transform duration-700"
+              style={{
+                transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+              }}
+              loading="lazy"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center bg-deep-alt">
+              <Film size={32} className="text-white/10" />
+            </div>
+          )}
 
           {/* Hover spotlight effect */}
           {isHovered && (
@@ -118,6 +131,18 @@ function AnimeCard({
             <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 backdrop-blur-sm">
               <Star size={10} className="fill-neon-gold text-neon-gold" />
               <span className="text-[10px] font-semibold text-neon-gold">{rating}</span>
+            </div>
+          )}
+
+          {/* Media type badge */}
+          {mediaType && (
+            <div className={`absolute top-3 left-3 flex items-center gap-1 rounded-full px-2 py-1 backdrop-blur-sm ${
+              mediaType === 'movie' ? 'bg-neon-blue/60' : 'bg-neon-purple/60'
+            }`}>
+              {mediaType === 'movie' ? <Film size={10} className="text-white" /> : <Tv size={10} className="text-white" />}
+              <span className="text-[10px] font-semibold text-white">
+                {mediaType === 'movie' ? 'Movie' : 'TV'}
+              </span>
             </div>
           )}
 

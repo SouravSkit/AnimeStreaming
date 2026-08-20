@@ -1,55 +1,104 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { getPopularAnime, GENRES, getGenreData } from '@/lib/anime';
+import {
+  getTrending,
+  getPopularMovies,
+  getPopularTV,
+  getTopRatedMovies,
+  getTopRatedTV,
+  getByGenre,
+  searchTMDB,
+  GENRE_IDS,
+  type ContentItem,
+} from '@/lib/tmdb-client';
 import AnimeCard from '@/components/AnimeCard';
 import SearchBar from '@/components/SearchBar';
 import { ShimmerGrid } from '@/components/ShimmerCard';
 import EnergyParticles from '@/components/EnergyParticles';
-import Typography from '@/components/Typography';
-import { RefreshCw, Sparkles, Flame, Crown, Zap, Star } from 'lucide-react';
+import { RefreshCw, Sparkles, Flame, Crown, Zap, Star, Film, Tv, TrendingUp } from 'lucide-react';
 import toast from 'react-hot-toast';
-import Link from 'next/link';
+import debounce from 'lodash.debounce';
 
-type AnimeData = {
+type Tab = {
   id: string;
-  image: string;
-  title: string;
-  releaseDate?: string;
-  rating?: string;
+  label: string;
+  icon: any;
+  color: string;
 };
 
-const tabs = [
-  { id: 'all', label: 'All', icon: Sparkles, color: '#a855f7' },
+const tabs: Tab[] = [
+  { id: 'trending', label: 'Trending', icon: TrendingUp, color: '#ef4444' },
+  { id: 'movies', label: 'Movies', icon: Film, color: '#22d3ee' },
+  { id: 'tv', label: 'TV Shows', icon: Tv, color: '#a855f7' },
+  { id: 'top', label: 'Top Rated', icon: Star, color: '#f59e0b' },
   { id: 'action', label: 'Action', icon: Flame, color: '#ef4444' },
-  { id: 'fantasy', label: 'Fantasy', icon: Crown, color: '#6366f1' },
-  { id: 'romance', label: 'Romance', icon: Star, color: '#ec4899' },
-  { id: 'comedy', label: 'Comedy', icon: Zap, color: '#f59e0b' },
+  { id: 'comedy', label: 'Comedy', icon: Zap, color: '#22d3ee' },
+  { id: 'scifi', label: 'Sci-Fi', icon: Crown, color: '#a855f7' },
 ];
 
+const GENRE_TAB_MAP: Record<string, { genreId: number; mediaType: 'movie' | 'tv' }> = {
+  action: { genreId: 28, mediaType: 'movie' },
+  comedy: { genreId: 35, mediaType: 'movie' },
+  scifi: { genreId: 878, mediaType: 'movie' },
+};
+
 function BrowsePage() {
-  const router = useRouter();
-  const [animeData, setAnimeData] = useState<AnimeData[]>([]);
-  const [filteredData, setFilteredData] = useState<AnimeData[]>([]);
-  const [activeTab, setActiveTab] = useState('all');
+  const [content, setContent] = useState<ContentItem[]>([]);
+  const [filteredContent, setFilteredContent] = useState<ContentItem[]>([]);
+  const [activeTab, setActiveTab] = useState('trending');
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
 
-  const fetchData = useCallback(
-    async (pageNum: number, append = false) => {
+  const fetchTabContent = useCallback(
+    async (tab: string, pageNum: number, append = false) => {
       try {
-        const result = await getPopularAnime(pageNum);
-        const results = result?.results || [];
+        let result;
+        switch (tab) {
+          case 'trending':
+            result = await getTrending();
+            break;
+          case 'movies':
+            result = await getPopularMovies(pageNum);
+            break;
+          case 'tv':
+            result = await getPopularTV(pageNum);
+            break;
+          case 'top': {
+            const [movies, tv] = await Promise.all([
+              getTopRatedMovies(pageNum),
+              getTopRatedTV(pageNum),
+            ]);
+            result = {
+              results: [...movies.results, ...tv.results].sort(
+                (a: ContentItem, b: ContentItem) =>
+                  parseFloat(b.rating) - parseFloat(a.rating)
+              ),
+              hasNextPage: movies.hasNextPage || tv.hasNextPage,
+            };
+            break;
+          }
+          default: {
+            const genreConfig = GENRE_TAB_MAP[tab];
+            if (genreConfig) {
+              result = await getByGenre(genreConfig.genreId, genreConfig.mediaType, pageNum);
+            } else {
+              result = await getTrending();
+            }
+          }
+        }
+
+        const items = result?.results || [];
         if (append) {
-          setAnimeData((prev) => [...prev, ...results]);
+          setContent((prev) => [...prev, ...items]);
         } else {
-          setAnimeData(results);
+          setContent(items);
         }
       } catch (error) {
-        toast.error('Failed to load anime');
+        toast.error('Failed to load content');
       } finally {
         setLoading(false);
         setRefreshing(false);
@@ -58,35 +107,73 @@ function BrowsePage() {
     []
   );
 
+  // Fetch content on tab change
   useEffect(() => {
-    fetchData(1);
-  }, [fetchData]);
+    setLoading(true);
+    setPage(1);
+    setIsSearching(false);
+    setSearchQuery('');
+    fetchTabContent(activeTab, 1);
+  }, [activeTab, fetchTabContent]);
 
   // Filter by search
   useEffect(() => {
     if (!searchQuery.trim()) {
-      setFilteredData(animeData);
+      setFilteredContent(content);
     } else {
       const q = searchQuery.toLowerCase();
-      setFilteredData(
-        animeData.filter(
+      setFilteredContent(
+        content.filter(
           (item) =>
-            item.title.toLowerCase().includes(q)
+            item.title.toLowerCase().includes(q) ||
+            item.genres?.some((g) => g.toLowerCase().includes(q))
         )
       );
     }
-  }, [searchQuery, animeData]);
+  }, [searchQuery, content]);
+
+  // Handle search via TMDB API
+  const debouncedSearch = useCallback(
+    debounce(async (query: string) => {
+      if (!query.trim()) {
+        setIsSearching(false);
+        fetchTabContent(activeTab, 1);
+        return;
+      }
+      setIsSearching(true);
+      setLoading(true);
+      try {
+        const result = await searchTMDB(query);
+        setContent(result.results || []);
+      } catch (error) {
+        toast.error('Search failed');
+      } finally {
+        setLoading(false);
+      }
+    }, 400),
+    [activeTab]
+  );
+
+  const handleSearch = (text: string) => {
+    setSearchQuery(text);
+    if (text.trim().length >= 2) {
+      debouncedSearch(text);
+    } else if (!text.trim()) {
+      setIsSearching(false);
+      fetchTabContent(activeTab, 1);
+    }
+  };
 
   const loadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchData(nextPage, true);
+    fetchTabContent(activeTab, nextPage, true);
   };
 
   const handleRefresh = () => {
     setRefreshing(true);
     setPage(1);
-    fetchData(1);
+    fetchTabContent(activeTab, 1);
   };
 
   return (
@@ -102,7 +189,7 @@ function BrowsePage() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">Explore</h1>
-            <p className="text-xs text-white/40">Discover your next favorite anime</p>
+            <p className="text-xs text-white/40">Movies, TV shows, and more</p>
           </div>
           <button
             onClick={handleRefresh}
@@ -116,7 +203,7 @@ function BrowsePage() {
 
         {/* Search */}
         <div className="mb-6">
-          <SearchBar value={searchQuery} onChange={setSearchQuery} />
+          <SearchBar value={searchQuery} onChange={handleSearch} placeholder="Search movies, TV shows..." />
         </div>
 
         {/* Category Tabs */}
@@ -146,41 +233,43 @@ function BrowsePage() {
         {/* Results Count */}
         <div className="mb-4">
           <p className="text-sm text-white/30">
-            {filteredData.length} anime found
+            {filteredContent.length} {isSearching ? 'search results' : 'titles found'}
           </p>
         </div>
 
-        {/* Anime Grid */}
+        {/* Content Grid */}
         {loading ? (
           <ShimmerGrid count={12} />
         ) : (
           <>
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-              {filteredData.map((item, i) => (
+              {filteredContent.map((item, i) => (
                 <AnimeCard
                   key={item.id}
                   id={item.id}
                   image={item.image}
                   title={item.title}
-                  releaseDate={item.releaseDate}
-                  rating={item.rating}
+                  releaseDate={item.releaseDate || undefined}
+                  rating={item.rating || undefined}
+                  mediaType={item.mediaType}
+                  href={`/watch/${item.mediaType}/${item.tmdbId}`}
                   index={i}
                 />
               ))}
             </div>
 
-            {filteredData.length === 0 && !loading && (
+            {filteredContent.length === 0 && !loading && (
               <div className="py-20 text-center">
                 <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-2xl bg-white/5">
                   <Sparkles size={32} className="text-white/20" />
                 </div>
-                <p className="text-lg font-medium text-white/40">No anime found</p>
+                <p className="text-lg font-medium text-white/40">No content found</p>
                 <p className="mt-1 text-sm text-white/20">Try a different search or category</p>
               </div>
             )}
 
             {/* Load More */}
-            {filteredData.length > 0 && (
+            {filteredContent.length > 0 && !isSearching && (
               <div className="mt-8 text-center">
                 <button
                   onClick={loadMore}

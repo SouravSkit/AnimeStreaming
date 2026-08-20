@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { getTopAiring, getGenreData, getPopularAnime, getRecentNews, GENRES } from '@/lib/anime';
+import { getTrending, getByGenre, getPopularMovies, getPopularTV, type ContentItem } from '@/lib/tmdb-client';
 import HeroBanner from '@/components/HeroBanner';
-import GenreSection from '@/components/GenreSection';
 import SectionHeader from '@/components/SectionHeader';
 import AnimeCard from '@/components/AnimeCard';
 import EnergyParticles from '@/components/EnergyParticles';
@@ -11,59 +10,82 @@ import { ShimmerHero, ShimmerGrid } from '@/components/ShimmerCard';
 import Typography from '@/components/Typography';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { Flame, Crown, Sparkles, Zap, Star, TrendingUp, Clock, Layers } from 'lucide-react';
+import { Flame, Crown, Sparkles, Zap, Star, Film, Tv, TrendingUp } from 'lucide-react';
 
-type AnimeItem = {
-  id: string;
-  image: string;
+type Section = {
   title: string;
-  description?: string;
-  genres?: string[];
-  rating?: string;
-  releaseDate?: string;
-  totalEpisodes?: number;
+  subtitle: string;
+  icon: any;
+  color: string;
+  items: ContentItem[];
 };
 
-type GenreData = Record<string, { results: AnimeItem[] }>;
-
 function HomePageContent() {
-  const [topAiring, setTopAiring] = useState<AnimeItem[]>([]);
-  const [popular, setPopular] = useState<AnimeItem[]>([]);
-  const [genreData, setGenreData] = useState<GenreData>({});
+  const [trending, setTrending] = useState<ContentItem[]>([]);
+  const [popularMovies, setPopularMovies] = useState<ContentItem[]>([]);
+  const [popularTV, setPopularTV] = useState<ContentItem[]>([]);
+  const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [topResult, popularResult] = await Promise.allSettled([
-        getTopAiring(),
-        getPopularAnime(1),
-      ]);
+      // Fetch trending, popular movies, popular TV, and genre sections in parallel
+      const [trendingRes, moviesRes, tvRes, actionRes, comedyRes, sciFiRes, dramaRes] =
+        await Promise.allSettled([
+          getTrending(),
+          getPopularMovies(),
+          getPopularTV(),
+          getByGenre(28, 'movie'),  // Action
+          getByGenre(35, 'movie'),  // Comedy
+          getByGenre(878, 'movie'), // Sci-Fi
+          getByGenre(18, 'tv'),     // Drama
+        ]);
 
-      if (topResult.status === 'fulfilled') {
-        const items = topResult.value?.results || [];
-        setTopAiring(items);
+      if (trendingRes.status === 'fulfilled') setTrending(trendingRes.value.results || []);
+      if (moviesRes.status === 'fulfilled') setPopularMovies(moviesRes.value.results || []);
+      if (tvRes.status === 'fulfilled') setPopularTV(tvRes.value.results || []);
+
+      const genreSections: Section[] = [];
+      if (actionRes.status === 'fulfilled' && actionRes.value.results.length > 0) {
+        genreSections.push({
+          title: 'Action & Thrills',
+          subtitle: 'Edge-of-your-seat excitement',
+          icon: Flame,
+          color: '#ef4444',
+          items: actionRes.value.results.slice(0, 12),
+        });
       }
-      if (popularResult.status === 'fulfilled') {
-        setPopular(popularResult.value?.results || []);
+      if (comedyRes.status === 'fulfilled' && comedyRes.value.results.length > 0) {
+        genreSections.push({
+          title: 'Comedy Picks',
+          subtitle: 'Lighthearted fun for everyone',
+          icon: Sparkles,
+          color: '#22d3ee',
+          items: comedyRes.value.results.slice(0, 12),
+        });
       }
-
-      const genreResults = await Promise.allSettled(
-        GENRES.map(async (genre) => {
-          const data = await getGenreData(genre);
-          return { genre, data };
-        })
-      );
-
-      const newGenreData: GenreData = {};
-      genreResults.forEach((result) => {
-        if (result.status === 'fulfilled') {
-          newGenreData[result.value.genre] = result.value.data;
-        }
-      });
-      setGenreData(newGenreData);
+      if (sciFiRes.status === 'fulfilled' && sciFiRes.value.results.length > 0) {
+        genreSections.push({
+          title: 'Sci-Fi & Fantasy',
+          subtitle: 'Beyond the stars and imagination',
+          icon: Crown,
+          color: '#a855f7',
+          items: sciFiRes.value.results.slice(0, 12),
+        });
+      }
+      if (dramaRes.status === 'fulfilled' && dramaRes.value.results.length > 0) {
+        genreSections.push({
+          title: 'Top Drama Series',
+          subtitle: 'Award-winning storytelling',
+          icon: Star,
+          color: '#f59e0b',
+          items: dramaRes.value.results.slice(0, 12),
+        });
+      }
+      setSections(genreSections);
     } catch (error) {
-      toast.error('Failed to load data');
+      toast.error('Failed to load content');
     } finally {
       setLoading(false);
     }
@@ -73,146 +95,130 @@ function HomePageContent() {
     fetchData();
   }, [fetchData]);
 
-  // Special genre categories
-  const specialSections = [
-    { key: 'action', title: 'Beast Mode', icon: Flame, color: '#ef4444', subtitle: 'Powerful warriors and legendary battles' },
-    { key: 'fantasy', title: 'Legendary Classics', icon: Crown, color: '#f59e0b', subtitle: 'Timeless tales of wonder and adventure' },
-    { key: 'thriller', title: 'Shonen Favorites', icon: Zap, color: '#a855f7', subtitle: 'Edge-of-your-seat action and drama' },
-    { key: 'romance', title: 'Most Popular', icon: Star, color: '#ec4899', subtitle: 'Fan favorites and top-rated series' },
-  ];
-
   return (
     <div className="min-h-screen bg-deep">
       {/* Hero Section */}
       {loading ? (
         <ShimmerHero />
       ) : (
-        topAiring.length > 0 && <HeroBanner data={topAiring} />
+        trending.length > 0 && <HeroBanner data={trending} />
       )}
 
       {/* Main Content */}
       <div className="relative mx-auto max-w-[1400px] px-4 pb-32 pt-4">
-        {/* Ambient particles in content area */}
         <EnergyParticles count={15} color="#a855f7" speed="slow" className="opacity-30" />
 
-        {/* Trending Now Section */}
-        {topAiring.length > 0 && (
+        {/* Trending Now */}
+        {trending.length > 0 && (
           <section className="mb-12">
             <SectionHeader
               title="Trending Now"
-              subtitle="Currently hot in the anime world"
+              subtitle="What's hot this week"
               accentColor="#ef4444"
               viewAllHref="/browse"
             />
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-              {topAiring.slice(0, 10).map((item, i) => (
-                <AnimeCard
-                  key={item.id}
-                  id={item.id}
-                  image={item.image}
-                  title={item.title}
-                  rating={item.rating}
-                  releaseDate={item.releaseDate}
-                  index={i}
-                />
+              {trending.slice(0, 12).map((item, i) => (
+                <ContentCard key={item.id} item={item} index={i} />
               ))}
             </div>
           </section>
         )}
 
-        {/* New Releases */}
-        {popular.length > 0 && (
+        {/* Popular Movies */}
+        {popularMovies.length > 0 && (
           <section className="mb-12">
             <SectionHeader
-              title="New Releases"
-              subtitle="Fresh anime just added"
+              title="Popular Movies"
+              subtitle="Must-watch films right now"
               accentColor="#22d3ee"
-              viewAllHref="/browse"
+              viewAllHref="/browse?tab=movies"
             />
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-              {popular.slice(0, 10).map((item, i) => (
-                <AnimeCard
-                  key={`popular-${item.id}`}
-                  id={item.id}
-                  image={item.image}
-                  title={item.title}
-                  rating={item.rating}
-                  releaseDate={item.releaseDate}
-                  index={i}
-                />
+              {popularMovies.slice(0, 12).map((item, i) => (
+                <ContentCard key={`movie-${item.id}`} item={item} index={i} />
               ))}
             </div>
           </section>
         )}
 
-        {/* Special Curated Sections */}
-        {specialSections.map(({ key, title, icon: Icon, color, subtitle }) => (
-          genreData[key]?.results && (
-            <section key={key} className="mb-12">
-              <div className="mb-5 flex items-end justify-between">
-                <div className="flex items-center gap-3">
-                  <div
-                    className="flex h-9 w-9 items-center justify-center rounded-xl"
-                    style={{
-                      background: `${color}15`,
-                      border: `1px solid ${color}33`,
-                    }}
-                  >
-                    <Icon size={18} style={{ color }} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-bold tracking-wide text-white">{title}</h2>
-                    <p className="text-xs text-white/40">{subtitle}</p>
-                  </div>
-                </div>
-                <Link
-                  href="/browse"
-                  className="text-xs font-medium text-white/50 transition-colors hover:text-white"
+        {/* Popular TV Shows */}
+        {popularTV.length > 0 && (
+          <section className="mb-12">
+            <SectionHeader
+              title="Popular TV Shows"
+              subtitle="Binge-worthy series everyone loves"
+              accentColor="#a855f7"
+              viewAllHref="/browse?tab=tv"
+            />
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+              {popularTV.slice(0, 12).map((item, i) => (
+                <ContentCard key={`tv-${item.id}`} item={item} index={i} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Genre Sections */}
+        {sections.map((section, idx) => (
+          <section key={idx} className="mb-12">
+            <div className="mb-5 flex items-end justify-between">
+              <div className="flex items-center gap-3">
+                <div
+                  className="flex h-9 w-9 items-center justify-center rounded-xl"
+                  style={{
+                    background: `${section.color}15`,
+                    border: `1px solid ${section.color}33`,
+                  }}
                 >
-                  View All →
-                </Link>
+                  <section.icon size={18} style={{ color: section.color }} />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold tracking-wide text-white">{section.title}</h2>
+                  <p className="text-xs text-white/40">{section.subtitle}</p>
+                </div>
               </div>
-              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-                {genreData[key].results.slice(0, 10).map((item, i) => (
-                  <AnimeCard
-                    key={`special-${key}-${item.id}`}
-                    id={item.id}
-                    image={item.image}
-                    title={item.title}
-                    rating={item.rating}
-                    releaseDate={item.releaseDate}
-                    index={i}
-                  />
-                ))}
-              </div>
-            </section>
-          )
+              <Link
+                href="/browse"
+                className="text-xs font-medium text-white/50 transition-colors hover:text-white"
+              >
+                View All →
+              </Link>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+              {section.items.map((item, i) => (
+                <ContentCard key={`section-${idx}-${item.id}`} item={item} index={i} />
+              ))}
+            </div>
+          </section>
         ))}
 
-        {/* All Genre Sections */}
-        <section className="mt-16">
-          <SectionHeader
-            title="Browse by Genre"
-            subtitle="Explore anime by your favorite genres"
-            accentColor="#6366f1"
-          />
-
-          {loading ? (
-            <div className="py-10">
-              <ShimmerGrid count={12} />
-            </div>
-          ) : (
-            GENRES.map((genre) => (
-              <GenreSection
-                key={genre}
-                genre={genre}
-                data={genreData[genre]?.results || []}
-              />
-            ))
-          )}
-        </section>
+        {/* Loading state for genre sections */}
+        {loading && (
+          <section className="mt-16">
+            <ShimmerGrid count={12} />
+          </section>
+        )}
       </div>
     </div>
+  );
+}
+
+/**
+ * Content card that links to the detail page with correct TMDB data.
+ */
+function ContentCard({ item, index }: { item: ContentItem; index: number }) {
+  return (
+    <Link href={`/watch/${item.mediaType}/${item.tmdbId}`} className="block">
+      <AnimeCard
+        id={item.id}
+        image={item.image}
+        title={item.title}
+        rating={item.rating || undefined}
+        releaseDate={item.releaseDate || undefined}
+        index={index}
+      />
+    </Link>
   );
 }
 

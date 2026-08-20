@@ -5,22 +5,24 @@ import Link from 'next/link';
 import Typography from './Typography';
 import EnergyParticles from './EnergyParticles';
 import CinematicBurst from './CinematicBurst';
-import { Play, Plus, Info, Star, Clock, Calendar } from 'lucide-react';
+import { Play, Plus, Info, Star, Clock, Calendar, Film, Tv } from 'lucide-react';
 
-type AnimeItem = {
+type HeroItem = {
   id: string;
+  tmdbId?: number;
   image: string;
+  backdrop?: string;
   title: string;
   description?: string;
   genres?: string[];
   rating?: string;
   releaseDate?: string;
   totalEpisodes?: number;
-  type?: string;
+  mediaType?: 'movie' | 'tv';
 };
 
 type Props = {
-  data: AnimeItem[];
+  data: HeroItem[];
 };
 
 function HeroBanner({ data }: Props) {
@@ -55,6 +57,14 @@ function HeroBanner({ data }: Props) {
 
   if (!currentItem) return null;
 
+  // Determine watch link — TMDB content goes to /watch, legacy anime goes to /anime
+  const watchHref = currentItem.tmdbId && currentItem.mediaType
+    ? `/watch/${currentItem.mediaType}/${currentItem.tmdbId}`
+    : `/anime/${currentItem.id}`;
+
+  // Best background image: prefer backdrop, fallback to poster
+  const heroImage = currentItem.backdrop || currentItem.image;
+
   return (
     <div
       ref={heroRef}
@@ -76,7 +86,7 @@ function HeroBanner({ data }: Props) {
         }}
       >
         <img
-          src={currentItem.image}
+          src={heroImage}
           alt={currentItem.title}
           className="h-full w-full object-cover object-top"
         />
@@ -111,8 +121,22 @@ function HeroBanner({ data }: Props) {
       {/* === CONTENT === */}
       <div className="relative z-10 flex h-full flex-col justify-end px-6 pb-28 sm:px-12 md:px-16 lg:px-24">
         <div className="max-w-2xl">
+          {/* Media type badge */}
+          {currentItem.mediaType && (
+            <div className="mb-3">
+              <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+                currentItem.mediaType === 'movie'
+                  ? 'bg-neon-blue/10 text-neon-blue border border-neon-blue/20'
+                  : 'bg-neon-purple/10 text-neon-purple border border-neon-purple/20'
+              }`}>
+                {currentItem.mediaType === 'movie' ? <Film size={12} /> : <Tv size={12} />}
+                {currentItem.mediaType === 'movie' ? 'Movie' : 'TV Series'}
+              </span>
+            </div>
+          )}
+
           {/* Genre tags */}
-          {currentItem.genres && (
+          {currentItem.genres && currentItem.genres.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-2">
               {currentItem.genres.slice(0, 4).map((genre, i) => (
                 <span
@@ -177,7 +201,7 @@ function HeroBanner({ data }: Props) {
             className="mt-8 flex flex-wrap gap-4"
             style={{ animation: 'slide-up 0.8s ease-out 0.3s both' }}
           >
-            <Link href={`/anime/${currentItem.id}`} onClick={handleWatchNow}>
+            <Link href={watchHref} onClick={handleWatchNow}>
               <button className="btn-cinematic flex items-center gap-2 rounded-2xl px-8 py-3.5 font-poppins font-semibold text-white">
                 <Play size={18} className="fill-white" />
                 Watch Now
@@ -214,7 +238,7 @@ function HeroBanner({ data }: Props) {
         ))}
       </div>
 
-      {/* === ANIME LIST COUNTER === */}
+      {/* === COUNTER === */}
       <div className="absolute bottom-8 left-6 z-10 sm:left-12 md:left-16 lg:left-24">
         <span className="text-xs text-white/40">
           <span className="font-semibold text-white/70">{currentIndex + 1}</span>

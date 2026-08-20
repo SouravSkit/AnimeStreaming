@@ -68,15 +68,15 @@ function RegisterPage() {
       </div>
 
       {/* Register Card */}
-      <div className="relative z-10 w-full max-w-md px-6 animate-scale-in">
-        <div className="glass-strong rounded-3xl p-8 sm:p-10">
+      <div className="relative z-10 w-full max-w-md lg:max-w-xl xl:max-w-2xl px-6 animate-scale-in">
+        <div className="glass-strong rounded-3xl p-8 sm:p-10 lg:p-14">
           {/* Header */}
           <div className="mb-8 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-neon-cyan/20 to-energy-purple/10 border border-neon-cyan/20">
               <Shield size={24} className="text-neon-cyan" />
             </div>
-            <h1 className="text-2xl font-bold text-white">Create Account</h1>
-            <p className="mt-1 text-sm text-white/40">Join the anime universe</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-white">Create Account</h1>
+            <p className="mt-1 text-sm lg:text-base text-white/40">Join the anime universe</p>
           </div>
 
           {/* Form */}

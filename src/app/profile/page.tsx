@@ -34,7 +34,7 @@ function ProfilePage() {
           <EnergyParticles count={15} color="#a855f7" speed="slow" className="opacity-15" />
         </div>
 
-        <div className="relative z-10 mx-auto max-w-lg px-4 pb-32 pt-8">
+        <div className="relative z-10 mx-auto max-w-lg lg:max-w-xl xl:max-w-2xl px-4 sm:px-6 lg:px-10 pb-32 pt-8 lg:pt-16">
           {/* Profile Card */}
           <div className="glass-strong rounded-3xl p-8 text-center">
             {/* Avatar */}
@@ -137,28 +137,29 @@ function ProfilePage() {
         <EnergyParticles count={25} color="#a855f7" speed="slow" />
       </div>
 
-      <div className="relative z-10 text-center px-8">
+      <div className="relative z-10 text-center px-8 w-full max-w-sm lg:max-w-lg">
         <div
-          className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl"
+          className="mx-auto mb-6 flex h-20 w-20 lg:h-28 lg:w-28 items-center justify-center rounded-2xl lg:rounded-3xl"
           style={{
             background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(0, 212, 255, 0.1))',
             border: '1px solid rgba(168, 85, 247, 0.3)',
           }}
         >
-          <Sparkles size={32} className="text-neon-purple" />
+          <Sparkles size={32} className="text-neon-purple lg:hidden" />
+          <Sparkles size={48} className="text-neon-purple hidden lg:block" />
         </div>
 
-        <h1 className="text-2xl font-bold text-white">Join Zenkai</h1>
-        <p className="mt-2 text-sm text-white/40">Sign in to track your anime journey</p>
+        <h1 className="text-2xl lg:text-4xl font-bold text-white">Join Zenkai</h1>
+        <p className="mt-2 text-sm lg:text-lg text-white/40">Sign in to track your anime journey</p>
 
-        <div className="mt-8 flex flex-col gap-4">
+        <div className="mt-8 lg:mt-12 flex flex-col gap-4 lg:gap-5">
           <Link href="/login" className="w-full">
-            <button className="btn-cinematic w-full rounded-2xl py-4 font-semibold text-white">
+            <button className="btn-cinematic w-full rounded-2xl py-4 lg:py-5 lg:text-lg font-semibold text-white">
               Sign In
             </button>
           </Link>
           <Link href="/register" className="w-full">
-            <button className="btn-outline-cinematic w-full rounded-2xl py-4 font-medium text-white">
+            <button className="btn-outline-cinematic w-full rounded-2xl py-4 lg:py-5 lg:text-lg font-medium text-white">
               Create Account
             </button>
           </Link>

@@ -207,7 +207,7 @@ function WatchPage() {
         <div className="absolute inset-0 bg-deep/90" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-5xl px-4 pb-32">
+      <div className="relative z-10 mx-auto max-w-5xl lg:max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] px-4 sm:px-6 lg:px-10 xl:px-20 pb-32">
         {/* Header */}
         <div className="flex items-center justify-between py-4">
           <button
@@ -345,7 +345,7 @@ function WatchPage() {
             )}
           </div>
 
-          <h1 className="text-3xl font-bold text-white sm:text-4xl">{details.title}</h1>
+          <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white">{details.title}</h1>
 
           {details.tagline && (
             <p className="mt-2 text-sm italic text-white/40">"{details.tagline}"</p>
@@ -392,7 +392,7 @@ function WatchPage() {
           )}
 
           <div className="mt-5 rounded-2xl border border-white/5 bg-white/[0.02] p-5">
-            <p className="text-sm leading-relaxed text-white/60">
+            <p className="text-sm lg:text-base leading-relaxed text-white/60">
               {showDescription
                 ? details.description?.slice(0, 350)
                 : details.description}
@@ -512,8 +512,8 @@ function WatchPage() {
         {details.similar && details.similar.length > 0 && (
           <div>
             <h2 className="mb-4 text-xl font-bold text-white">More Like This</h2>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2 sm:gap-3">
-              {details.similar.slice(0, 10).map((item) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2 sm:gap-3 lg:gap-4">
+              {details.similar.slice(0, 14).map((item) => (
                 <a
                   key={item.id}
                   href={`/watch/${item.mediaType}/${item.tmdbId}`}

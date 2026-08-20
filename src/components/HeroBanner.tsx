@@ -69,7 +69,7 @@ function HeroBanner({ data }: Props) {
     <div
       ref={heroRef}
       onMouseMove={handleMouseMove}
-      className="relative h-[85vh] min-h-[600px] w-full overflow-hidden"
+      className="relative h-[70vh] sm:h-[80vh] lg:h-[85vh] min-h-[500px] sm:min-h-[600px] w-full overflow-hidden"
     >
       <CinematicBurst active={burstActive} onComplete={() => setBurstActive(false)} />
 
@@ -119,7 +119,7 @@ function HeroBanner({ data }: Props) {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(3,0,20,0.4)_70%,rgba(3,0,20,0.9)_100%)]" />
 
       {/* === CONTENT === */}
-      <div className="relative z-10 flex h-full flex-col justify-end px-6 pb-28 sm:px-12 md:px-16 lg:px-24">
+      <div className="relative z-10 flex h-full flex-col justify-end px-6 pb-28 sm:px-12 md:px-16 lg:px-24 xl:px-32">
         <div className="max-w-2xl">
           {/* Media type badge */}
           {currentItem.mediaType && (
@@ -220,7 +220,7 @@ function HeroBanner({ data }: Props) {
       </div>
 
       {/* === SIDE INDICATORS === */}
-      <div className="absolute right-6 bottom-32 z-10 flex flex-col gap-3 sm:right-12 md:right-16 lg:right-24">
+      <div className="absolute right-6 bottom-32 z-10 flex flex-col gap-3 sm:right-12 md:right-16 lg:right-24 xl:right-32">
         {data.slice(0, Math.min(data.length, 8)).map((item, i) => (
           <button
             key={item.id || i}
@@ -239,7 +239,7 @@ function HeroBanner({ data }: Props) {
       </div>
 
       {/* === COUNTER === */}
-      <div className="absolute bottom-8 left-6 z-10 sm:left-12 md:left-16 lg:left-24">
+      <div className="absolute bottom-8 left-6 z-10 sm:left-12 md:left-16 lg:left-24 xl:left-32">
         <span className="text-xs text-white/40">
           <span className="font-semibold text-white/70">{currentIndex + 1}</span>
           {' / '}

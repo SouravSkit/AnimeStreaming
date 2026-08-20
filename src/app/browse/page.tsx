@@ -184,12 +184,12 @@ function BrowsePage() {
         <EnergyParticles count={15} color="#a855f7" speed="slow" className="opacity-15" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-[1400px] px-4 pt-6 pb-32">
+      <div className="relative z-10 mx-auto max-w-none px-4 sm:px-6 lg:px-12 xl:px-20 2xl:px-28 pt-6 pb-32">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Explore</h1>
-            <p className="text-xs text-white/40">Movies, TV shows, and more</p>
+            <h1 className="text-2xl lg:text-3xl font-bold text-white">Explore</h1>
+            <p className="text-xs lg:text-sm text-white/40">Movies, TV shows, and more</p>
           </div>
           <button
             onClick={handleRefresh}
@@ -215,7 +215,7 @@ function BrowsePage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex flex-shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-medium transition-all duration-300"
+                className="flex flex-shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 lg:px-6 lg:py-3 lg:text-base font-medium transition-all duration-300"
                 style={{
                   background: isActive ? `${tab.color}20` : 'rgba(255,255,255,0.03)',
                   border: `1px solid ${isActive ? `${tab.color}44` : 'rgba(255,255,255,0.06)'}`,
@@ -242,7 +242,7 @@ function BrowsePage() {
           <ShimmerGrid count={12} />
         ) : (
           <>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6">
               {filteredContent.map((item, i) => (
                 <AnimeCard
                   key={item.id}

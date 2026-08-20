@@ -397,3 +397,23 @@ a { color: inherit; text-decoration: none; }
 @media (max-width: 640px) {
   .hero-title { font-size: 1.8rem !important; }
 }
+
+/* ===== DESKTOP RESPONSIVE OVERRIDES ===== */
+
+/* Desktop (1024px+) */
+@media (min-width: 1024px) {
+  .hero-title { font-size: 3.5rem !important; }
+  .section-title-desktop { font-size: 1.75rem; }
+}
+
+/* Large desktop (1440px+) */
+@media (min-width: 1440px) {
+  .hero-title { font-size: 4rem !important; }
+  .section-title-desktop { font-size: 2rem; }
+}
+
+/* Ultra-wide (1920px+) */
+@media (min-width: 1920px) {
+  .hero-title { font-size: 4.5rem !important; }
+}
+

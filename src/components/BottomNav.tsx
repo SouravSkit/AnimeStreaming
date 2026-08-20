@@ -3,13 +3,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Compass, Search, Play, User } from 'lucide-react';
+import { Home, Compass, Search, User } from 'lucide-react';
 
 const tabs = [
   { name: 'Home', href: '/', icon: Home },
   { name: 'Browse', href: '/browse', icon: Compass },
   { name: 'Search', href: '/search', icon: Search },
-  { name: 'News', href: '/news', icon: Play },
   { name: 'Profile', href: '/profile', icon: User },
 ];
 

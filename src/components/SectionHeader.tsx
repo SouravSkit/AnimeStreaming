@@ -25,7 +25,7 @@ function SectionHeader({ title, subtitle, accentColor = '#a855f7', viewAllHref, 
             }}
           />
           <h2
-            className="text-xl font-bold tracking-wide"
+            className="text-xl lg:text-2xl xl:text-3xl font-bold tracking-wide"
             style={{
               textShadow: `0 0 20px ${accentColor}33`,
             }}

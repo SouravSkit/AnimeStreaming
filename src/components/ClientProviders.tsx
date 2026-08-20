@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useUserStore, initUserStore } from '@/store/userStore';
 import BottomNav from './BottomNav';
+import DesktopHeader from './DesktopHeader';
 import { Toaster } from 'react-hot-toast';
 
 function ClientProviders({ children }: { children: React.ReactNode }) {
@@ -36,8 +37,9 @@ function ClientProviders({ children }: { children: React.ReactNode }) {
           },
         }}
       />
-      <div className={showNav ? 'pb-20' : ''}>{children}</div>
-      {showNav && <BottomNav />}
+      {showNav && <DesktopHeader />}
+      <div className={showNav ? 'pb-20 lg:pb-16' : ''}>{children}</div>
+      {showNav && <div className="lg:hidden"><BottomNav /></div>}
     </>
   );
 }

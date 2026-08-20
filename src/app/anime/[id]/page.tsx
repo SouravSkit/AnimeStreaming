@@ -140,7 +140,7 @@ function AnimeDetailPage() {
         <div className="absolute inset-0 bg-deep/90" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-5xl px-4 pb-32">
+      <div className="relative z-10 mx-auto max-w-5xl lg:max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] px-4 sm:px-6 lg:px-10 xl:px-20 pb-32">
         {/* Header */}
         <div className="flex items-center justify-between py-4">
           <button
@@ -282,7 +282,7 @@ function AnimeDetailPage() {
         {/* Description */}
         {details && (
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white sm:text-4xl">
+            <h1 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white">
               {details.title}
             </h1>
 

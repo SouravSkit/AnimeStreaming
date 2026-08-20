@@ -121,8 +121,9 @@ function AnimeCard({
               transform: isHovered ? 'scale(1)' : 'scale(0.5)',
             }}
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-neon-purple/80 backdrop-blur-sm shadow-[0_0_30px_rgba(168,85,247,0.5)]">
-              <Play size={24} className="ml-1 fill-white text-white" />
+            <div className="flex h-14 w-14 lg:h-16 lg:w-16 items-center justify-center rounded-full bg-neon-purple/80 backdrop-blur-sm shadow-[0_0_30px_rgba(168,85,247,0.5)]">
+              <Play size={24} className="ml-1 fill-white text-white lg:hidden" />
+              <Play size={28} className="ml-1 fill-white text-white hidden lg:block" />
             </div>
           </div>
 
@@ -147,7 +148,7 @@ function AnimeCard({
           )}
 
           {/* Content at bottom */}
-          <div className="absolute bottom-0 left-0 right-0 p-3">
+          <div className="absolute bottom-0 left-0 right-0 p-2.5 lg:p-3.5">
             <Typography
               size={13}
               weight="semibold"

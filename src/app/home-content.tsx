@@ -105,7 +105,7 @@ function HomePageContent() {
       )}
 
       {/* Main Content */}
-      <div className="relative mx-auto max-w-[1400px] px-4 pb-32 pt-4">
+      <div className="relative mx-auto max-w-none px-4 sm:px-6 lg:px-12 xl:px-20 2xl:px-28 pb-32 pt-4">
         <EnergyParticles count={15} color="#a855f7" speed="slow" className="opacity-30" />
 
         {/* Trending Now */}
@@ -117,8 +117,8 @@ function HomePageContent() {
               accentColor="#ef4444"
               viewAllHref="/browse"
             />
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-              {trending.slice(0, 12).map((item, i) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6">
+              {trending.slice(0, 14).map((item, i) => (
                 <ContentCard key={item.id} item={item} index={i} />
               ))}
             </div>
@@ -134,8 +134,8 @@ function HomePageContent() {
               accentColor="#22d3ee"
               viewAllHref="/browse?tab=movies"
             />
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-              {popularMovies.slice(0, 12).map((item, i) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6">
+              {popularMovies.slice(0, 14).map((item, i) => (
                 <ContentCard key={`movie-${item.id}`} item={item} index={i} />
               ))}
             </div>
@@ -151,8 +151,8 @@ function HomePageContent() {
               accentColor="#a855f7"
               viewAllHref="/browse?tab=tv"
             />
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-              {popularTV.slice(0, 12).map((item, i) => (
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6">
+              {popularTV.slice(0, 14).map((item, i) => (
                 <ContentCard key={`tv-${item.id}`} item={item} index={i} />
               ))}
             </div>
@@ -174,8 +174,8 @@ function HomePageContent() {
                   <section.icon size={18} style={{ color: section.color }} />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold tracking-wide text-white">{section.title}</h2>
-                  <p className="text-xs text-white/40">{section.subtitle}</p>
+                  <h2 className="text-xl lg:text-2xl font-bold tracking-wide text-white">{section.title}</h2>
+                  <p className="text-xs lg:text-sm text-white/40">{section.subtitle}</p>
                 </div>
               </div>
               <Link
@@ -185,7 +185,7 @@ function HomePageContent() {
                 View All →
               </Link>
             </div>
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4 lg:gap-5 xl:gap-6">
               {section.items.map((item, i) => (
                 <ContentCard key={`section-${idx}-${item.id}`} item={item} index={i} />
               ))}

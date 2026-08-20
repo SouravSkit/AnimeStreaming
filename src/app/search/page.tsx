@@ -51,7 +51,7 @@ function SearchPage() {
         <EnergyParticles count={15} color="#00d4ff" speed="slow" className="opacity-15" />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-2xl px-4 pt-6 pb-32">
+      <div className="relative z-10 mx-auto max-w-2xl lg:max-w-4xl xl:max-w-6xl px-4 lg:px-8 pt-6 pb-32">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
@@ -80,18 +80,19 @@ function SearchPage() {
             </div>
           </div>
         ) : !searched ? (
-          <div className="flex flex-col items-center py-20">
+          <div className="flex flex-col items-center py-20 lg:py-32">
             <div
-              className="mb-6 flex h-24 w-24 items-center justify-center rounded-3xl"
+              className="mb-6 flex h-24 w-24 lg:h-32 lg:w-32 items-center justify-center rounded-3xl"
               style={{
                 background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(0, 212, 255, 0.05))',
                 border: '1px solid rgba(168, 85, 247, 0.15)',
               }}
             >
-              <Sparkles size={40} className="text-neon-purple/40" />
+              <Sparkles size={40} className="text-neon-purple/40 lg:hidden" />
+              <Sparkles size={56} className="text-neon-purple/40 hidden lg:block" />
             </div>
-            <h2 className="text-xl font-bold text-white/60">Search for Content</h2>
-            <p className="mt-2 text-sm text-white/30">Find movies, TV shows, and more</p>
+            <h2 className="text-xl lg:text-3xl font-bold text-white/60">Search for Content</h2>
+            <p className="mt-2 text-sm lg:text-base text-white/30">Find movies, TV shows, and more</p>
           </div>
         ) : results.length === 0 ? (
           <div className="flex flex-col items-center py-20">
@@ -116,10 +117,10 @@ function SearchPage() {
               <Link
                 key={item.id}
                 href={`/watch/${item.mediaType}/${item.tmdbId}`}
-                className="group flex items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.03] p-3 transition-all duration-300 hover:border-neon-purple/30 hover:bg-white/[0.06] hover:shadow-[0_0_30px_rgba(168,85,247,0.1)]"
+                className="group flex items-center gap-4 lg:gap-6 rounded-2xl border border-white/5 bg-white/[0.03] p-3 lg:p-4 transition-all duration-300 hover:border-neon-purple/30 hover:bg-white/[0.06] hover:shadow-[0_0_30px_rgba(168,85,247,0.1)]"
                 style={{ animation: `slide-up 0.4s ease-out ${i * 0.05}s both` }}
               >
-                <div className="relative h-[91px] w-[91px] flex-shrink-0 overflow-hidden rounded-xl bg-deep-alt">
+                <div className="relative h-[91px] w-[91px] lg:h-[130px] lg:w-[130px] flex-shrink-0 overflow-hidden rounded-xl lg:rounded-2xl bg-deep-alt">
                   {item.image ? (
                     <img
                       src={item.image}
@@ -141,7 +142,7 @@ function SearchPage() {
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-white transition-colors group-hover:text-neon-purple line-clamp-1">
+                  <h3 className="font-medium text-white transition-colors group-hover:text-neon-purple line-clamp-1 lg:text-lg">
                     {item.title}
                   </h3>
                   <div className="mt-1 flex items-center gap-2">

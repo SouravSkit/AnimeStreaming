@@ -20,6 +20,7 @@ import { RefreshCw, Sparkles, Flame, Crown, Zap, Star, Film, Tv, TrendingUp } fr
 import toast from 'react-hot-toast';
 import debounce from 'lodash.debounce';
 import { triggerAd } from '@/components/AdTrigger';
+import AdBanner from '@/components/AdBanner';
 
 type Tab = {
   id: string;
@@ -231,6 +232,11 @@ function BrowsePage() {
           })}
         </div>
 
+        {/* Ad Banner between tabs and grid */}
+        <div className="mb-6 flex justify-center py-2">
+          <AdBanner slot="banner-1" width={728} height={90} className="opacity-90" />
+        </div>
+
         {/* Results Count */}
         <div className="mb-4">
           <p className="text-sm text-white/30">
@@ -280,6 +286,11 @@ function BrowsePage() {
                 </button>
               </div>
             )}
+
+            {/* Ad Banner below content */}
+            <div className="mt-12 flex justify-center py-4">
+              <AdBanner slot="banner-3" width={160} height={300} className="opacity-90" />
+            </div>
           </>
         )}
 

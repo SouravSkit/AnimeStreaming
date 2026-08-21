@@ -11,6 +11,7 @@ import EnergyParticles from '@/components/EnergyParticles';
 import { ArrowLeft, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { triggerAd } from '@/components/AdTrigger';
+import AdBanner from '@/components/AdBanner';
 
 const loginSchema = yup.object().shape({
   email: yup.string().email('Enter a valid email').required('Email is required'),
@@ -149,7 +150,10 @@ function LoginPage() {
           </div>
         </div>
 
-
+        {/* Ad Banner */}
+        <div className="mt-8 flex justify-center">
+          <AdBanner slot="banner-3" width={160} height={300} className="opacity-90" />
+        </div>
       </div>
     </div>
   );

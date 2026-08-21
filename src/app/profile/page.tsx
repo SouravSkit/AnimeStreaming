@@ -7,6 +7,7 @@ import { useUserStore } from '@/store/userStore';
 import EnergyParticles from '@/components/EnergyParticles';
 import { LogOut, User, Settings, Heart, Clock, Download, ChevronRight, Shield, Sparkles } from 'lucide-react';
 import { triggerAd } from '@/components/AdTrigger';
+import AdBanner from '@/components/AdBanner';
 
 function ProfilePage() {
   const router = useRouter();
@@ -122,6 +123,11 @@ function ProfilePage() {
 
 
 
+          {/* Ad Banner */}
+          <div className="mt-8 flex justify-center">
+            <AdBanner slot="banner-2" width={468} height={60} className="opacity-90" />
+          </div>
+
           {/* Version */}
           <div className="mt-8 text-center">
             <p className="text-[11px] text-white/15">Version 1.0.0 • © zenexcom</p>
@@ -170,6 +176,11 @@ function ProfilePage() {
         </div>
 
 
+
+        {/* Ad Banner for guest view */}
+        <div className="mt-8 flex justify-center">
+          <AdBanner slot="banner-3" width={160} height={300} className="opacity-90" />
+        </div>
 
         <p className="mt-8 text-[11px] text-white/15">Version 1.0.0 • © zenexcom</p>
       </div>

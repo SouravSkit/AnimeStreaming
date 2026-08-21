@@ -6,6 +6,7 @@ import { useUserStore } from '@/store/userStore';
 import EnergyParticles from '@/components/EnergyParticles';
 import AuraGlow from '@/components/AuraGlow';
 import { triggerAd } from '@/components/AdTrigger';
+import AdBanner from '@/components/AdBanner';
 
 function LandingPage() {
   const { skipAuth } = useUserStore();
@@ -127,6 +128,14 @@ function LandingPage() {
             Create Account
           </button>
         </Link>
+      </div>
+
+      {/* === Ad Banner === */}
+      <div
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10"
+        style={{ animation: mounted ? 'slide-up 1s ease-out 1.0s both' : 'none' }}
+      >
+        <AdBanner slot="banner-2" width={468} height={60} className="opacity-80" />
       </div>
 
       {/* === Bottom decorative line === */}

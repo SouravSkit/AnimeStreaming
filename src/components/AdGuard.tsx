@@ -20,6 +20,21 @@ export default function AdGuard() {
     // This prevents AdGuard from hiding legitimate iframes/videos.
     const PROTECTED_SELECTORS: string[] = [];
 
+    // Selectors for ad elements that are explicitly allowed (our own ad containers)
+    const ALLOWED_AD_SELECTORS = [
+      '[data-ad-container]',
+      '[data-ad-slot]',
+      '.ad-banner',
+      '#container-3090e4446e031cebfd63070480886bf7',
+      '[id*="container-3090e4446e031cebfd63070480886bf7"]',
+      '#container-hrf-d6834deede2274762e409241db603406',
+      '[id*="container-hrf-"]',
+      '[id*="container-secondary-"]',
+      '[id^="ad-invoke-"]',
+      '[id^="ad-secondary-"]',
+      '[id^="ad-options-"]',
+    ];
+
     // Selectors for elements that are likely ad injections
     const AD_LIKE_SELECTORS = [
       '[id*="ad-"]',
@@ -42,6 +57,18 @@ export default function AdGuard() {
     };
 
     /**
+     * Check if an element matches one of our explicitly allowed ad selectors
+     */
+    const isAllowedAdElement = (el: Element): boolean => {
+      for (const selector of ALLOWED_AD_SELECTORS) {
+        if (el.matches?.(selector) || el.closest?.(selector)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    /**
      * Check if an element is inside a protected video area
      */
     const isInsideProtectedZone = (el: Element): boolean => {
@@ -57,6 +84,17 @@ export default function AdGuard() {
      * Check if an element looks like an ad injection
      */
     const isAdLikeElement = (el: Element): boolean => {
+      // <script>, <link>, and <noscript> elements are never ads by themselves
+      const tagName = el.tagName?.toLowerCase();
+      if (tagName === 'script' || tagName === 'link' || tagName === 'noscript' || tagName === 'style') {
+        return false;
+      }
+
+      // <iframe> elements inside ad containers are allowed (they are the ads themselves)
+      if (tagName === 'iframe' && isInsideAdContainer(el)) {
+        return false;
+      }
+
       // Check by selectors
       for (const selector of AD_LIKE_SELECTORS) {
         if (el.matches?.(selector) || el.closest?.(selector)) {
@@ -105,6 +143,11 @@ export default function AdGuard() {
 
         // If it's inside a designated ad container, allow it
         if (isInsideAdContainer(el)) {
+          return;
+        }
+
+        // If it matches an allowed ad selector, allow it
+        if (isAllowedAdElement(el)) {
           return;
         }
 

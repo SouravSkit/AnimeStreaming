@@ -11,6 +11,7 @@ import EnergyParticles from '@/components/EnergyParticles';
 import { ArrowLeft, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { triggerAd } from '@/components/AdTrigger';
+import AdBanner from '@/components/AdBanner';
 
 const registerSchema = yup.object().shape({
   name: yup.string().required('Username is required'),
@@ -159,7 +160,10 @@ function RegisterPage() {
           </div>
         </div>
 
-
+        {/* Ad Banner */}
+        <div className="mt-8 flex justify-center">
+          <AdBanner slot="banner-2" width={468} height={60} className="opacity-90" />
+        </div>
       </div>
     </div>
   );

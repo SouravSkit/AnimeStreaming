@@ -7,6 +7,7 @@ import Typography from '@/components/Typography';
 import CinematicBurst from '@/components/CinematicBurst';
 import { ArrowLeft, Play, Star, Calendar, Clock, Share2, Heart, ChevronDown, ChevronUp, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AdBanner from '@/components/AdBanner';
 
 type Episode = {
   id: string;
@@ -367,6 +368,11 @@ function AnimeDetailPage() {
             </div>
           </div>
         )}
+
+        {/* Ad Banner between description and episodes */}
+        <div className="mb-8 flex justify-center py-2">
+          <AdBanner slot="banner-2" width={468} height={60} className="opacity-90" />
+        </div>
 
         {/* Episodes */}
         {details?.episodes && details.episodes.length > 0 && (

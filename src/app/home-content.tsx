@@ -11,6 +11,7 @@ import Typography from '@/components/Typography';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Flame, Crown, Sparkles, Zap, Star, Film, Tv, TrendingUp } from 'lucide-react';
+import AdBanner from '@/components/AdBanner';
 
 type Section = {
   title: string;
@@ -142,6 +143,11 @@ function HomePageContent() {
           </section>
         )}
 
+        {/* Ad Banner between sections */}
+        <div className="mb-12 flex justify-center py-4">
+          <AdBanner slot="banner-1" width={728} height={90} className="opacity-90" />
+        </div>
+
         {/* Popular TV Shows */}
         {popularTV.length > 0 && (
           <section className="mb-12">
@@ -192,6 +198,11 @@ function HomePageContent() {
             </div>
           </section>
         ))}
+
+        {/* Ad Banner near bottom */}
+        <div className="mt-8 mb-12 flex justify-center py-4">
+          <AdBanner slot="banner-3" width={160} height={300} className="opacity-90" />
+        </div>
 
         {/* Loading state for genre sections */}
         {loading && (

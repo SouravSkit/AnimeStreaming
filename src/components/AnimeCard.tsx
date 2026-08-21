@@ -4,6 +4,7 @@ import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import Typography from './Typography';
 import { Play, Star, Film, Tv } from 'lucide-react';
+import { triggerAd } from '@/components/AdTrigger';
 
 type Props = {
   id: string;
@@ -50,6 +51,7 @@ function AnimeCard({
     <Link href={linkHref} className="block">
       <div
         ref={cardRef}
+        onClick={triggerAd}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onMouseMove={handleMouseMove}

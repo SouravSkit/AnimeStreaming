@@ -6,7 +6,7 @@ import BottomNav from './BottomNav';
 import DesktopHeader from './DesktopHeader';
 import { Toaster } from 'react-hot-toast';
 import AdGuard from './AdGuard';
-import AdScript from './AdScript';
+import AdTrigger from './AdTrigger';
 
 function ClientProviders({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -24,7 +24,7 @@ function ClientProviders({ children }: { children: React.ReactNode }) {
   return (
     <>
       <AdGuard />
-      <AdScript />
+      <AdTrigger />
       <Toaster
         position="top-center"
         toastOptions={{

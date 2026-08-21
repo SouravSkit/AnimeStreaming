@@ -9,7 +9,7 @@ import EnergyParticles from '@/components/EnergyParticles';
 import Typography from '@/components/Typography';
 import { ArrowLeft, Play, Sparkles, Film, Tv } from 'lucide-react';
 import debounce from 'lodash.debounce';
-import AdContainer from '@/components/AdContainer';
+import { triggerAd } from '@/components/AdTrigger';
 
 function SearchPage() {
   const router = useRouter();
@@ -64,12 +64,14 @@ function SearchPage() {
 
         {/* Search Bar */}
         <div className="mb-8">
-          <SearchBar
-            value={searchText}
-            onChange={handleSearch}
-            placeholder="Search for movies, TV shows..."
-            autoFocus
-          />
+          <div onClick={triggerAd}>
+            <SearchBar
+              value={searchText}
+              onChange={handleSearch}
+              placeholder="Search for movies, TV shows..."
+              autoFocus
+            />
+          </div>
         </div>
 
         {/* Results */}
@@ -180,10 +182,7 @@ function SearchPage() {
           </div>
         )}
 
-        {/* Ad Container - Below Search Results */}
-        <div className="mt-10">
-          <AdContainer id="search-below-results" position="below-video" />
-        </div>
+
       </div>
     </div>
   );

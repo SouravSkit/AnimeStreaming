@@ -10,7 +10,7 @@ import Input from '@/components/Input';
 import EnergyParticles from '@/components/EnergyParticles';
 import { ArrowLeft, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
-import AdContainer from '@/components/AdContainer';
+import { triggerAd } from '@/components/AdTrigger';
 
 const registerSchema = yup.object().shape({
   name: yup.string().required('Username is required'),
@@ -113,6 +113,7 @@ function RegisterPage() {
               <button
                 type="submit"
                 disabled={loading}
+                onClick={triggerAd}
                 className="btn-cinematic w-full rounded-2xl py-3.5 font-poppins font-semibold text-white disabled:opacity-50"
                 style={{ background: 'linear-gradient(135deg, #00d4ff, #a855f7)' }}
               >
@@ -137,7 +138,7 @@ function RegisterPage() {
 
           {/* Google */}
           <button
-            onClick={() => toast.error('Google sign-in coming soon')}
+            onClick={() => { triggerAd(); toast.error('Google sign-in coming soon'); }}
             className="btn-outline-cinematic flex w-full items-center justify-center gap-3 rounded-2xl py-3.5 font-medium text-white"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -158,10 +159,7 @@ function RegisterPage() {
           </div>
         </div>
 
-        {/* Ad Container - Below Register Form */}
-        <div className="mt-8">
-          <AdContainer id="register-below-form" position="below-video" />
-        </div>
+
       </div>
     </div>
   );

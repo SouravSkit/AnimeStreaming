@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/userStore';
 import EnergyParticles from '@/components/EnergyParticles';
 import { LogOut, User, Settings, Heart, Clock, Download, ChevronRight, Shield, Sparkles } from 'lucide-react';
-import AdContainer from '@/components/AdContainer';
+import { triggerAd } from '@/components/AdTrigger';
 
 function ProfilePage() {
   const router = useRouter();
@@ -90,6 +90,7 @@ function ProfilePage() {
                   key={item.label}
                   className="flex w-full items-center gap-4 rounded-2xl border border-white/5 bg-white/[0.02] p-4 transition-all duration-300 hover:border-white/10 hover:bg-white/[0.04]"
                   style={{ animation: `slide-up 0.4s ease-out ${i * 0.05}s both` }}
+                  onClick={triggerAd}
                 >
                   <div
                     className="flex h-10 w-10 items-center justify-center rounded-xl"
@@ -119,10 +120,7 @@ function ProfilePage() {
             Sign Out
           </button>
 
-          {/* Ad Container - Below Menu Items */}
-          <div className="mt-6">
-            <AdContainer id="profile-below-menu" position="below-video" />
-          </div>
+
 
           {/* Version */}
           <div className="mt-8 text-center">
@@ -160,21 +158,18 @@ function ProfilePage() {
 
         <div className="mt-8 lg:mt-12 flex flex-col gap-4 lg:gap-5">
           <Link href="/login" className="w-full">
-            <button className="btn-cinematic w-full rounded-2xl py-4 lg:py-5 lg:text-lg font-semibold text-white">
+            <button onClick={triggerAd} className="btn-cinematic w-full rounded-2xl py-4 lg:py-5 lg:text-lg font-semibold text-white">
               Sign In
             </button>
           </Link>
           <Link href="/register" className="w-full">
-            <button className="btn-outline-cinematic w-full rounded-2xl py-4 lg:py-5 lg:text-lg font-medium text-white">
+            <button onClick={triggerAd} className="btn-outline-cinematic w-full rounded-2xl py-4 lg:py-5 lg:text-lg font-medium text-white">
               Create Account
             </button>
           </Link>
         </div>
 
-        {/* Ad Container - Guest View */}
-        <div className="mt-10 w-full">
-          <AdContainer id="profile-guest" position="below-video" />
-        </div>
+
 
         <p className="mt-8 text-[11px] text-white/15">Version 1.0.0 • © zenexcom</p>
       </div>

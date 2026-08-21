@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useUserStore } from '@/store/userStore';
 import EnergyParticles from '@/components/EnergyParticles';
 import AuraGlow from '@/components/AuraGlow';
+import { triggerAd } from '@/components/AdTrigger';
 
 function LandingPage() {
   const { skipAuth } = useUserStore();
@@ -104,7 +105,7 @@ function LandingPage() {
         style={{ animation: mounted ? 'slide-up 0.6s ease-out 0.4s both' : 'none' }}
       >
         <button
-          onClick={skipAuth}
+          onClick={() => { triggerAd(); skipAuth(); }}
           className="rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm font-light text-white/60 backdrop-blur-sm transition-all hover:border-white/20 hover:bg-white/10 hover:text-white"
         >
           Skip →
@@ -117,12 +118,12 @@ function LandingPage() {
         style={{ animation: mounted ? 'slide-up 1s ease-out 0.9s both' : 'none' }}
       >
         <Link href="/login" className="w-full">
-          <button className="btn-cinematic w-full rounded-2xl py-4 font-poppins text-base font-semibold text-white">
+          <button onClick={triggerAd} className="btn-cinematic w-full rounded-2xl py-4 font-poppins text-base font-semibold text-white">
             Login
           </button>
         </Link>
         <Link href="/register" className="w-full">
-          <button className="btn-outline-cinematic w-full rounded-2xl py-4 font-poppins text-base font-medium text-white">
+          <button onClick={triggerAd} className="btn-outline-cinematic w-full rounded-2xl py-4 font-poppins text-base font-medium text-white">
             Create Account
           </button>
         </Link>

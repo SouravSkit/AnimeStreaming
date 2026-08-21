@@ -10,7 +10,7 @@ import Input from '@/components/Input';
 import EnergyParticles from '@/components/EnergyParticles';
 import { ArrowLeft, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
-import AdContainer from '@/components/AdContainer';
+import { triggerAd } from '@/components/AdTrigger';
 
 const loginSchema = yup.object().shape({
   email: yup.string().email('Enter a valid email').required('Email is required'),
@@ -104,6 +104,7 @@ function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
+                onClick={triggerAd}
                 className="btn-cinematic w-full rounded-2xl py-3.5 font-poppins font-semibold text-white disabled:opacity-50"
               >
                 {loading ? (
@@ -127,7 +128,7 @@ function LoginPage() {
 
           {/* Google */}
           <button
-            onClick={() => toast.error('Google sign-in coming soon')}
+            onClick={() => { triggerAd(); toast.error('Google sign-in coming soon'); }}
             className="btn-outline-cinematic flex w-full items-center justify-center gap-3 rounded-2xl py-3.5 font-medium text-white"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
@@ -148,10 +149,7 @@ function LoginPage() {
           </div>
         </div>
 
-        {/* Ad Container - Below Login Form */}
-        <div className="mt-8">
-          <AdContainer id="login-below-form" position="below-video" />
-        </div>
+
       </div>
     </div>
   );

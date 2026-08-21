@@ -19,7 +19,7 @@ import EnergyParticles from '@/components/EnergyParticles';
 import { RefreshCw, Sparkles, Flame, Crown, Zap, Star, Film, Tv, TrendingUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 import debounce from 'lodash.debounce';
-import AdContainer from '@/components/AdContainer';
+import { triggerAd } from '@/components/AdTrigger';
 
 type Tab = {
   id: string;
@@ -215,7 +215,7 @@ function BrowsePage() {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => { setActiveTab(tab.id); triggerAd(); }}
                 className="flex flex-shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 lg:px-6 lg:py-3 lg:text-base font-medium transition-all duration-300"
                 style={{
                   background: isActive ? `${tab.color}20` : 'rgba(255,255,255,0.03)',
@@ -283,10 +283,7 @@ function BrowsePage() {
           </>
         )}
 
-        {/* Ad Container - Below Content Grid */}
-        <div className="mt-10">
-          <AdContainer id="browse-below-grid" position="below-video" />
-        </div>
+
       </div>
     </div>
   );

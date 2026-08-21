@@ -7,7 +7,6 @@ import Typography from '@/components/Typography';
 import CinematicBurst from '@/components/CinematicBurst';
 import { ArrowLeft, Play, Star, Calendar, Clock, Share2, Heart, ChevronDown, ChevronUp, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
-import AdContainer from '@/components/AdContainer';
 
 type Episode = {
   id: string;
@@ -50,6 +49,7 @@ function AnimeDetailPage() {
   const [showQualityMenu, setShowQualityMenu] = useState(false);
   const [burstActive, setBurstActive] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [streamFailed, setStreamFailed] = useState(false);
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -83,6 +83,7 @@ function AnimeDetailPage() {
         setSelectedSource(defaultSource);
       } catch (error) {
         console.error('Stream error:', error);
+        setStreamFailed(true);
         toast.error('Failed to load video stream');
       } finally {
         setStreamLoading(false);
@@ -94,6 +95,14 @@ function AnimeDetailPage() {
   const handleEpisodeClick = (episodeId: string) => {
     setSelectedEpisode(episodeId);
     setIsPlaying(false);
+    setStreamFailed(false);
+  };
+
+  const handleRetryStream = () => {
+    if (selectedEpisode) {
+      setStreamFailed(false);
+      setIsPlaying(true);
+    }
   };
 
   const handleNextEpisode = () => {
@@ -171,6 +180,26 @@ function AnimeDetailPage() {
                 <p className="text-sm text-white/50">Loading stream...</p>
               </div>
             </div>
+          ) : isPlaying && streamFailed ? (
+            /* Stream failed */
+            <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-deep-alt flex items-center justify-center">
+              <div className="flex flex-col items-center gap-4 text-center px-6">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 border border-white/10">
+                  <Play size={28} className="text-white/30" />
+                </div>
+                <div>
+                  <p className="text-base font-medium text-white/70">Stream unavailable</p>
+                  <p className="mt-1 text-sm text-white/30">This video stream could not be loaded</p>
+                </div>
+                <button
+                  onClick={handleRetryStream}
+                  className="flex items-center gap-2 rounded-xl border border-neon-purple/30 bg-neon-purple/10 px-5 py-2.5 text-sm font-medium text-neon-purple transition-all hover:border-neon-purple/50 hover:bg-neon-purple/20"
+                >
+                  <Loader size={14} />
+                  Retry
+                </button>
+              </div>
+            </div>
           ) : selectedSource?.url && isPlaying ? (
             isEmbedUrl(selectedSource.url) ? (
               /* Embed iframe player */
@@ -237,9 +266,6 @@ function AnimeDetailPage() {
             </div>
           )}
         </div>
-
-        {/* Ad Container - Below Video Player */}
-        <AdContainer id="anime-below-video" position="below-video" className="mb-6" />
 
         {/* Quality & Controls */}
         {videoSources.length > 1 && isPlaying && (

@@ -16,14 +16,9 @@ import { useEffect } from 'react';
 export default function AdGuard() {
   useEffect(() => {
     // Selectors for elements that should be protected from ads
-    const PROTECTED_SELECTORS = [
-      // Video player containers (aspect-video is used by both watch and anime pages)
-      '.aspect-video',
-      'video',
-      'iframe',
-      // CinematicBurst overlay
-      '[class*="CinematicBurst"]',
-    ];
+    // NOTE: Video player selectors removed — ads no longer run on video pages.
+    // This prevents AdGuard from hiding legitimate iframes/videos.
+    const PROTECTED_SELECTORS: string[] = [];
 
     // Selectors for elements that are likely ad injections
     const AD_LIKE_SELECTORS = [

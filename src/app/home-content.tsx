@@ -209,16 +209,16 @@ function HomePageContent() {
  */
 function ContentCard({ item, index }: { item: ContentItem; index: number }) {
   return (
-    <Link href={`/watch/${item.mediaType}/${item.tmdbId}`} className="block">
-      <AnimeCard
-        id={item.id}
-        image={item.image}
-        title={item.title}
-        rating={item.rating || undefined}
-        releaseDate={item.releaseDate || undefined}
-        index={index}
-      />
-    </Link>
+    <AnimeCard
+      id={item.id}
+      image={item.image}
+      title={item.title}
+      rating={item.rating || undefined}
+      releaseDate={item.releaseDate || undefined}
+      mediaType={item.mediaType}
+      href={`/watch/${item.mediaType}/${item.tmdbId}`}
+      index={index}
+    />
   );
 }
 

@@ -86,6 +86,20 @@ export default function AdGuard() {
     };
 
     /**
+     * Safely remove a DOM node, guarding against React race conditions
+     * where the node may already have been unmounted.
+     */
+    const safeRemove = (el: Element) => {
+      try {
+        if (el.parentNode && el.parentNode.contains(el)) {
+          el.parentNode.removeChild(el);
+        }
+      } catch {
+        // Node already removed by React or another observer — ignore
+      }
+    };
+
+    /**
      * Handle newly added nodes
      */
     const handleNewNodes = (nodes: Node[]) => {
@@ -96,21 +110,20 @@ export default function AdGuard() {
 
         // If it's inside a designated ad container, allow it
         if (isInsideAdContainer(el)) {
-          // But still check if it's trying to escape the container
           return;
         }
 
-        // If it's in a protected zone, remove it
+        // If it's in a protected zone, hide it (don't remove — React owns the tree)
         if (isInsideProtectedZone(el)) {
-          console.warn('[AdGuard] Removing ad element from protected zone:', el);
-          el.remove();
+          console.warn('[AdGuard] Hiding ad element from protected zone:', el);
+          (el as HTMLElement).style.cssText =
+            'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; position: absolute !important; left: -9999px !important; width: 0 !important; height: 0 !important; overflow: hidden !important;';
           continue;
         }
 
         // If it looks like an ad outside a container, neutralize it
         if (isAdLikeElement(el)) {
           console.warn('[AdGuard] Neutralizing ad element outside container:', el);
-          // Hide it rather than remove (some scripts expect the element to exist)
           (el as HTMLElement).style.cssText =
             'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; position: absolute !important; left: -9999px !important; width: 0 !important; height: 0 !important; overflow: hidden !important;';
         }
@@ -121,28 +134,36 @@ export default function AdGuard() {
      * Handle attribute changes that could turn a safe element into an ad
      */
     const handleAttributeChange = (attr: MutationRecord) => {
-      const el = attr.target as Element;
+      try {
+        const el = attr.target as Element;
+        if (!el || !el.parentNode) return;
 
-      if (isInsideAdContainer(el)) return;
+        if (isInsideAdContainer(el)) return;
 
-      if (isInsideProtectedZone(el)) {
-        // Revert any style changes that could be ad-related
-        const style = window.getComputedStyle(el);
-        if (style.position === 'fixed' || parseInt(style.zIndex, 10) > 100) {
-          (el as HTMLElement).style.removeProperty('position');
-          (el as HTMLElement).style.removeProperty('z-index');
+        if (isInsideProtectedZone(el)) {
+          const style = window.getComputedStyle(el);
+          if (style.position === 'fixed' || parseInt(style.zIndex, 10) > 100) {
+            (el as HTMLElement).style.removeProperty('position');
+            (el as HTMLElement).style.removeProperty('z-index');
+          }
         }
+      } catch {
+        // Element may have been removed — ignore
       }
     };
 
     // Set up MutationObserver
     const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.type === 'childList') {
-          handleNewNodes(Array.from(mutation.addedNodes));
-        } else if (mutation.type === 'attributes') {
-          handleAttributeChange(mutation);
+      try {
+        for (const mutation of mutations) {
+          if (mutation.type === 'childList') {
+            handleNewNodes(Array.from(mutation.addedNodes));
+          } else if (mutation.type === 'attributes') {
+            handleAttributeChange(mutation);
+          }
         }
+      } catch {
+        // Silently ignore — prevents observer errors from breaking React
       }
     });
 
@@ -155,15 +176,23 @@ export default function AdGuard() {
     });
 
     // Also run an initial scan for any existing ad elements
-    const existingAds = document.querySelectorAll(
-      AD_LIKE_SELECTORS.join(', ')
-    );
-    existingAds.forEach((el) => {
-      if (!isInsideAdContainer(el) && isAdLikeElement(el)) {
-        (el as HTMLElement).style.cssText =
-          'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;';
-      }
-    });
+    try {
+      const existingAds = document.querySelectorAll(
+        AD_LIKE_SELECTORS.join(', ')
+      );
+      existingAds.forEach((el) => {
+        try {
+          if (!isInsideAdContainer(el) && isAdLikeElement(el)) {
+            (el as HTMLElement).style.cssText =
+              'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;';
+          }
+        } catch {
+          // Element may have been removed — ignore
+        }
+      });
+    } catch {
+      // Initial scan failed — ignore
+    }
 
     return () => {
       observer.disconnect();

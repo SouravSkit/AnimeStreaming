@@ -19,6 +19,7 @@ import EnergyParticles from '@/components/EnergyParticles';
 import { RefreshCw, Sparkles, Flame, Crown, Zap, Star, Film, Tv, TrendingUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 import debounce from 'lodash.debounce';
+import AdContainer from '@/components/AdContainer';
 
 type Tab = {
   id: string;
@@ -281,6 +282,11 @@ function BrowsePage() {
             )}
           </>
         )}
+
+        {/* Ad Container - Below Content Grid */}
+        <div className="mt-10">
+          <AdContainer id="browse-below-grid" position="below-video" />
+        </div>
       </div>
     </div>
   );

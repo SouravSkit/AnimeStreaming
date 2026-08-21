@@ -5,6 +5,8 @@ import { useUserStore, initUserStore } from '@/store/userStore';
 import BottomNav from './BottomNav';
 import DesktopHeader from './DesktopHeader';
 import { Toaster } from 'react-hot-toast';
+import AdGuard from './AdGuard';
+import AdScript from './AdScript';
 
 function ClientProviders({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
@@ -21,6 +23,8 @@ function ClientProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <AdGuard />
+      <AdScript />
       <Toaster
         position="top-center"
         toastOptions={{

@@ -10,6 +10,7 @@ import Input from '@/components/Input';
 import EnergyParticles from '@/components/EnergyParticles';
 import { ArrowLeft, Shield } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AdContainer from '@/components/AdContainer';
 
 const registerSchema = yup.object().shape({
   name: yup.string().required('Username is required'),
@@ -155,6 +156,11 @@ function RegisterPage() {
               Sign in
             </Link>
           </div>
+        </div>
+
+        {/* Ad Container - Below Register Form */}
+        <div className="mt-8">
+          <AdContainer id="register-below-form" position="below-video" />
         </div>
       </div>
     </div>

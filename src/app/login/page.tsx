@@ -10,6 +10,7 @@ import Input from '@/components/Input';
 import EnergyParticles from '@/components/EnergyParticles';
 import { ArrowLeft, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AdContainer from '@/components/AdContainer';
 
 const loginSchema = yup.object().shape({
   email: yup.string().email('Enter a valid email').required('Email is required'),
@@ -145,6 +146,11 @@ function LoginPage() {
               Create one
             </Link>
           </div>
+        </div>
+
+        {/* Ad Container - Below Login Form */}
+        <div className="mt-8">
+          <AdContainer id="login-below-form" position="below-video" />
         </div>
       </div>
     </div>

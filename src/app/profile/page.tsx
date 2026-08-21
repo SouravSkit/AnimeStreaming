@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useUserStore } from '@/store/userStore';
 import EnergyParticles from '@/components/EnergyParticles';
 import { LogOut, User, Settings, Heart, Clock, Download, ChevronRight, Shield, Sparkles } from 'lucide-react';
+import AdContainer from '@/components/AdContainer';
 
 function ProfilePage() {
   const router = useRouter();
@@ -118,6 +119,11 @@ function ProfilePage() {
             Sign Out
           </button>
 
+          {/* Ad Container - Below Menu Items */}
+          <div className="mt-6">
+            <AdContainer id="profile-below-menu" position="below-video" />
+          </div>
+
           {/* Version */}
           <div className="mt-8 text-center">
             <p className="text-[11px] text-white/15">Version 1.0.0 • © zenexcom</p>
@@ -163,6 +169,11 @@ function ProfilePage() {
               Create Account
             </button>
           </Link>
+        </div>
+
+        {/* Ad Container - Guest View */}
+        <div className="mt-10 w-full">
+          <AdContainer id="profile-guest" position="below-video" />
         </div>
 
         <p className="mt-8 text-[11px] text-white/15">Version 1.0.0 • © zenexcom</p>

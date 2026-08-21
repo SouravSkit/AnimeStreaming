@@ -9,6 +9,7 @@ import EnergyParticles from '@/components/EnergyParticles';
 import Typography from '@/components/Typography';
 import { ArrowLeft, Play, Sparkles, Film, Tv } from 'lucide-react';
 import debounce from 'lodash.debounce';
+import AdContainer from '@/components/AdContainer';
 
 function SearchPage() {
   const router = useRouter();
@@ -178,6 +179,11 @@ function SearchPage() {
             ))}
           </div>
         )}
+
+        {/* Ad Container - Below Search Results */}
+        <div className="mt-10">
+          <AdContainer id="search-below-results" position="below-video" />
+        </div>
       </div>
     </div>
   );

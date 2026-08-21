@@ -1,0 +1,174 @@
+'use client';
+
+import { useEffect } from 'react';
+
+/**
+ * AdGuard - Monitors DOM mutations and prevents ads from appearing
+ * in protected areas (video player, content overlays, etc.).
+ *
+ * How it works:
+ * 1. Watches for new DOM elements being added anywhere in the page
+ * 2. Checks if the new element is inside a designated [data-ad-container]
+ * 3. If NOT inside an ad container, checks if it's in a protected zone
+ * 4. Removes or neutralizes any ad element found in protected zones
+ * 5. Also strips fixed/absolute positioned overlays that could cover the video
+ */
+export default function AdGuard() {
+  useEffect(() => {
+    // Selectors for elements that should be protected from ads
+    const PROTECTED_SELECTORS = [
+      // Video player containers (aspect-video is used by both watch and anime pages)
+      '.aspect-video',
+      'video',
+      'iframe',
+      // CinematicBurst overlay
+      '[class*="CinematicBurst"]',
+    ];
+
+    // Selectors for elements that are likely ad injections
+    const AD_LIKE_SELECTORS = [
+      '[id*="ad-"]',
+      '[id*="adsbygoogle"]',
+      '[class*="ad-"]',
+      '[class*="adsbygoogle"]',
+      '[data-ad]',
+      '[id*="google_ads"]',
+      '[class*="google_ads"]',
+      '[id*="effectivecpm"]',
+      '[class*="effectivecpm"]',
+      '[id*="pl30949711"]',
+    ];
+
+    /**
+     * Check if an element is inside a designated ad container
+     */
+    const isInsideAdContainer = (el: Element): boolean => {
+      return !!el.closest('[data-ad-container]');
+    };
+
+    /**
+     * Check if an element is inside a protected video area
+     */
+    const isInsideProtectedZone = (el: Element): boolean => {
+      for (const selector of PROTECTED_SELECTORS) {
+        if (el.closest(selector)) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+    /**
+     * Check if an element looks like an ad injection
+     */
+    const isAdLikeElement = (el: Element): boolean => {
+      // Check by selectors
+      for (const selector of AD_LIKE_SELECTORS) {
+        if (el.matches?.(selector) || el.closest?.(selector)) {
+          return true;
+        }
+      }
+
+      // Check for fixed/absolute positioned overlays that could cover content
+      const style = window.getComputedStyle(el);
+      const position = style.position;
+      const zIndex = parseInt(style.zIndex, 10) || 0;
+
+      if ((position === 'fixed' || position === 'absolute') && zIndex > 100) {
+        const rect = el.getBoundingClientRect();
+        // If it covers a significant portion of the viewport, it's likely an overlay ad
+        if (rect.width > 200 && rect.height > 100) {
+          return true;
+        }
+      }
+
+      return false;
+    };
+
+    /**
+     * Handle newly added nodes
+     */
+    const handleNewNodes = (nodes: Node[]) => {
+      for (const node of nodes) {
+        if (node.nodeType !== Node.ELEMENT_NODE) continue;
+
+        const el = node as Element;
+
+        // If it's inside a designated ad container, allow it
+        if (isInsideAdContainer(el)) {
+          // But still check if it's trying to escape the container
+          return;
+        }
+
+        // If it's in a protected zone, remove it
+        if (isInsideProtectedZone(el)) {
+          console.warn('[AdGuard] Removing ad element from protected zone:', el);
+          el.remove();
+          continue;
+        }
+
+        // If it looks like an ad outside a container, neutralize it
+        if (isAdLikeElement(el)) {
+          console.warn('[AdGuard] Neutralizing ad element outside container:', el);
+          // Hide it rather than remove (some scripts expect the element to exist)
+          (el as HTMLElement).style.cssText =
+            'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; position: absolute !important; left: -9999px !important; width: 0 !important; height: 0 !important; overflow: hidden !important;';
+        }
+      }
+    };
+
+    /**
+     * Handle attribute changes that could turn a safe element into an ad
+     */
+    const handleAttributeChange = (attr: MutationRecord) => {
+      const el = attr.target as Element;
+
+      if (isInsideAdContainer(el)) return;
+
+      if (isInsideProtectedZone(el)) {
+        // Revert any style changes that could be ad-related
+        const style = window.getComputedStyle(el);
+        if (style.position === 'fixed' || parseInt(style.zIndex, 10) > 100) {
+          (el as HTMLElement).style.removeProperty('position');
+          (el as HTMLElement).style.removeProperty('z-index');
+        }
+      }
+    };
+
+    // Set up MutationObserver
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (mutation.type === 'childList') {
+          handleNewNodes(Array.from(mutation.addedNodes));
+        } else if (mutation.type === 'attributes') {
+          handleAttributeChange(mutation);
+        }
+      }
+    });
+
+    // Start observing the document body
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class', 'id'],
+    });
+
+    // Also run an initial scan for any existing ad elements
+    const existingAds = document.querySelectorAll(
+      AD_LIKE_SELECTORS.join(', ')
+    );
+    existingAds.forEach((el) => {
+      if (!isInsideAdContainer(el) && isAdLikeElement(el)) {
+        (el as HTMLElement).style.cssText =
+          'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important;';
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  return null; // This component only runs side effects
+}

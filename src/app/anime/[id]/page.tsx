@@ -7,6 +7,7 @@ import Typography from '@/components/Typography';
 import CinematicBurst from '@/components/CinematicBurst';
 import { ArrowLeft, Play, Star, Calendar, Clock, Share2, Heart, ChevronDown, ChevronUp, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AdContainer from '@/components/AdContainer';
 
 type Episode = {
   id: string;
@@ -236,6 +237,9 @@ function AnimeDetailPage() {
             </div>
           )}
         </div>
+
+        {/* Ad Container - Below Video Player */}
+        <AdContainer id="anime-below-video" position="below-video" className="mb-6" />
 
         {/* Quality & Controls */}
         {videoSources.length > 1 && isPlaying && (

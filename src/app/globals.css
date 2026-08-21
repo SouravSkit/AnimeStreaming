@@ -393,9 +393,83 @@ a { color: inherit; text-decoration: none; }
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(168, 85, 247, 0.2) !important;
 }
 
+/* ===== AD PROTECTION ===== */
+
+/* Video player protection: ensure video area is never covered by ads */
+.aspect-video {
+  position: relative;
+  z-index: 10;
+  isolation: isolate;
+}
+
+/* Prevent any positioned overlay from covering the video player */
+.aspect-video iframe,
+.aspect-video video {
+  position: relative;
+  z-index: 10;
+}
+
+/* Designated ad containers - these are the ONLY allowed ad zones */
+.ad-container {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Neutralize any fixed/absolute overlays that could cover video */
+body > [style*="position: fixed"],
+body > [style*="position:fixed"] {
+  pointer-events: none;
+  z-index: 1 !important;
+}
+
+/* Protect the video player wrapper from ad injection */
+.aspect-video::before,
+.aspect-video::after {
+  content: '';
+  position: absolute;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* Ad script loading indicator */
+.ad-container:empty::before {
+  content: '';
+  display: block;
+  width: 728px;
+  max-width: 100%;
+  height: 90px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px dashed rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 640px) {
   .hero-title { font-size: 1.8rem !important; }
+  .ad-container:empty::before {
+    width: 100%;
+    height: 60px;
+  }
+  .ad-container {
+    min-height: 60px;
+  }
+  .ad-container [data-ad-slot] {
+    min-height: 60px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .ad-container:empty::before {
+    width: 468px;
+    height: 60px;
+  }
+  .ad-container {
+    min-height: 70px;
+  }
+  .ad-container [data-ad-slot] {
+    min-height: 70px;
+  }
 }
 
 /* ===== DESKTOP RESPONSIVE OVERRIDES ===== */

@@ -28,6 +28,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import AdContainer from '@/components/AdContainer';
 
 type Episode = {
   id: number;
@@ -301,6 +302,9 @@ function WatchPage() {
             </div>
           )}
         </div>
+
+        {/* Ad Container - Below Video Player */}
+        <AdContainer id="watch-below-video" position="below-video" className="mb-6" />
 
         {/* Video Results Selection */}
         {isPlaying && youtubeResults.length > 1 && (
